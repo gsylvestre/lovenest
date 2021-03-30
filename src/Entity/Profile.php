@@ -70,6 +70,13 @@ class Profile
         return $this;
     }
 
+    public function getAge(): int
+    {
+        $now = new \DateTime();
+        $diff = $now->diff($this->getBirthday(), true);
+        return $diff->y;
+    }
+
     public function getGender(): ?string
     {
         return $this->gender;

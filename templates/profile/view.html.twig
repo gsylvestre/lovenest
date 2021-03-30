@@ -9,8 +9,14 @@
         </div>
         <div class="column">
             <h2>Profil de {{ foundUser.username }}</h2>
-            <div>Date de naissance : {{ foundUser.profile.birthday|date("d-m-Y") }}</div>
+            <div>{{ foundUser.profile.age }} ans</div>
             <div>{{ foundUser.profile.description|nl2br }}</div>
+
+            <div>{{ foundUser.username }} recherche des {{ foundUser.searchCriterias.genders|join(',') }}
+                de {{ foundUser.searchCriterias.minAge }} à {{ foundUser.searchCriterias.maxAge }} ans habitant dans les départements :
+            {% for dept in foundUser.searchCriterias.departments %}
+                {{ dept.name }}
+            {% endfor %}</div>
         </div>
     </div>
 {% endblock %}
