@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Vos critères de recherche | {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <h2>Vos critères de recherche</h2>
+    {{ form(searchCriteriasForm) }}
+{% endblock %}
+

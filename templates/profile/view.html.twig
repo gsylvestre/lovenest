@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="columns">
+        <div class="column is-one-third">
+            {% for pic in foundUser.profilePicture %}
+                <img src="{{ asset('img/profile/small/' ~ pic.filename) }}" alt="Photo de {{ foundUser.username }}">
+            {% endfor %}
+        </div>
+        <div class="column">
+            <h2>Profil de {{ foundUser.username }}</h2>
+            <div>Date de naissance : {{ foundUser.profile.birthday|date("d-m-Y") }}</div>
+            <div>{{ foundUser.profile.description|nl2br }}</div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}
+Profil de {{ foundUser.username }} | {{ parent() }}
+{% endblock %}
+

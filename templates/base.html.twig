@@ -36,12 +36,40 @@
                     <div class="navbar-end">
                         <div class="navbar-item">
                             <div class="buttons">
-                                <a class="button is-primary">
-                                    <strong>Sign up</strong>
+                                {% if app.user %}
+
+                                <div class="navbar-item has-dropdown is-hoverable">
+                                    <a class="navbar-link" href="{{ path('profile_view', {'username': app.user.username}) }}">
+                                        {{ app.user.username }}
+                                    </a>
+                                    <div class="navbar-dropdown is-right">
+                                        <a class="navbar-item" href="{{ path('profile_view', {'username': app.user.username}) }}">
+                                            Voir mon profil
+                                        </a>
+                                        <a class="navbar-item" href="{{ path('profile_edit') }}">
+                                            Infos
+                                        </a>
+                                        <a class="navbar-item" href="{{ path('profile_criterias_edit') }}">
+                                            Critères
+                                        </a>
+                                        <a class="navbar-item" href="{{ path('profile_picture') }}">
+                                            Ma photo
+                                        </a>
+                                        <a class="navbar-item" href="{{ path('app_logout') }}">
+                                            Déconnexion
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% else %}
+                                <a class="button is-primary" href="{{ path('app_register') }}">
+                                    <strong>Créer un compte</strong>
                                 </a>
-                                <a class="button is-light">
-                                    Log in
+                                <a class="button is-light" href="{{ path('app_login') }}">
+                                    Connexion
                                 </a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -49,8 +77,18 @@
             </nav>
         </div>
     </header>
+
     <main class="block">
         <div class="container content">
+            {# read and display all flash messages #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="notification is-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
             {% block body %}{% endblock %}
         </div>
     </main>
