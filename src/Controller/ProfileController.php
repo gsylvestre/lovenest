@@ -44,6 +44,7 @@ class ProfileController extends AbstractController
             );
 
             $user->setDateCreated(new \DateTime());
+            $user->setRoles(["ROLE_USER"]);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -159,10 +160,13 @@ class ProfileController extends AbstractController
             //redimensionne l'image avec SimpleImage
             $simpleImage = new SimpleImage();
             $simpleImage->fromFile($this->getParameter('upload_dir') . "/$newFilename")
-                ->bestFit(1000, 1000)
+                ->bestFit(400, 400)
                 ->toFile($this->getParameter('upload_dir') . "/big/$newFilename")
-                ->bestFit(300, 300)
+                ->thumbnail(140, 140)
                 ->toFile($this->getParameter('upload_dir') . "/small/$newFilename");
+
+            //détruit l'originale
+            unlink($this->getParameter('upload_dir') . "/$newFilename");
 
             //hydrate et sauvegarde les données de l'image
             $profilePicture->setFilename($newFilename);
@@ -194,6 +198,21 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/view.html.twig', [
             'foundUser' => $foundUser
+        ]);
+    }
+
+    /**
+     * @Route("/profil/suggestions", name="profile_list")
+     */
+    public function list(UserRepository $userRepository)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $results = $userRepository->findSuggestionsForUser($user);
+
+        return $this->render('profile/list.html.twig', [
+            'users' => $results
         ]);
     }
 }

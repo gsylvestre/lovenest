@@ -3,11 +3,36 @@
 namespace App\DataFixtures;
 
 use App\Entity\Department;
+use App\Entity\Profile;
+use App\Entity\ProfilePicture;
+use App\Entity\SearchCriterias;
+use App\Entity\User;
+use claviska\SimpleImage;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\String\ByteString;
 
 class AppFixtures extends Fixture
 {
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private UserPasswordEncoderInterface $passwordEncoder;
+    /**
+     * @var ParameterBagInterface
+     */
+    private ParameterBagInterface $parameterBag;
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, ParameterBagInterface $parameterBag)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+        $this->parameterBag = $parameterBag;
+    }
+
     public function load(ObjectManager $manager)
     {
         $departements = array();
@@ -116,12 +141,79 @@ class AppFixtures extends Fixture
         $departements['975'] = 'Saint Pierre et Miquelon';
         $departements['976'] = 'Mayotte';
 
+        $departementsEntities = [];
+
         foreach($departements as $code => $name){
             $department = new Department();
             $department->setName($name);
             $department->setCode($code);
             $manager->persist($department);
+            $departementsEntities[] = $department;
         }
+
+        $manager->flush();
+
+        $faker = \Faker\Factory::create("fr_FR");
+
+        $genders = ["f", "m", "o"];
+
+
+        $picFinder = new Finder();
+        $picFinder->in("src/DataFixtures/pics/")->files();
+        $picFilenames = [];
+        foreach($picFinder as $pf){
+            $picFilenames[] = $pf->getRealPath();
+        }
+
+        for($i = 0; $i < 100; $i++){
+            $profile = new Profile();
+            $profile->setDescription($faker->paragraphs($faker->numberBetween(0,4), true));
+            $profile->setCity($faker->city);
+            $profile->setPostalCode($faker->randomKey($departements) . $faker->numberBetween(10, 99)*10);
+            $profile->setDateCreated($faker->dateTimeBetween("- 5 months"));
+            $profile->setBirthday($faker->dateTimeBetween("- 100 years", "- 18 years"));
+            $profile->setGender($faker->randomElement($genders));
+
+            $criterias = new SearchCriterias();
+            $criterias->setMinAge($faker->numberBetween(18, 80));
+            $criterias->setMaxAge($faker->numberBetween($criterias->getMinAge(), 100));
+            $criterias->setGenders($faker->randomElements($genders, $faker->numberBetween(1,3)));
+            for($d=0; $d<$faker->numberBetween(1,7); $d++) {
+                $criterias->addDepartment($faker->randomElement($departementsEntities));
+            }
+
+            $user = new User();
+            $user->setDateCreated($faker->dateTimeBetween("- 5 months"));
+            $user->setRoles(["ROLE_USER"]);
+            $user->setEmail($faker->unique()->email);
+            $user->setUsername($faker->unique()->userName);
+            $hash = $this->passwordEncoder->encodePassword($user, $user->getUsername());
+            $user->setPassword($hash);
+            $user->setProfile($profile);
+            $user->setSearchCriterias($criterias);
+
+            $manager->persist($profile);
+            $manager->persist($criterias);
+            $manager->persist($user);
+
+            $newFilename = ByteString::fromRandom(30) . ".jpg";
+
+            //redimensionne l'image avec SimpleImage
+            $simpleImage = new SimpleImage();
+            $randomPic = $faker->randomElement($picFilenames);
+            $simpleImage->fromFile($randomPic)
+                ->toFile($this->parameterBag->get('upload_dir') . "/big/$newFilename")
+                ->thumbnail(140, 140)
+                ->toFile($this->parameterBag->get('upload_dir') . "/small/$newFilename");
+
+            $profilePicture = new ProfilePicture();
+            $profilePicture->setFilename($newFilename);
+            $profilePicture->setUser($user);
+            $profilePicture->setDateCreated($user->getDateCreated());
+            $manager->persist($profilePicture);
+        }
+
+
 
         $manager->flush();
     }
