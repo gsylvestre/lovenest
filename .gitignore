@@ -16,3 +16,6 @@
 ###< symfony/phpunit-bridge ###
 
 /.idea/
+
+/public/img/profile/big/*.jpg
+/public/img/profile/small/*.jpg
