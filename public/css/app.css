@@ -17,13 +17,15 @@ main {
     color: #FFFFFF;
 }
 
-.navbar a {
-    color: #FFFFFF;
+.navbar a,
+.purple-bg a {
+    color: #F969B9;
 }
 
-.navbar a:hover {
+.navbar a:hover,
+.purple-bg a:hover {
     background-color: transparent;
-    color: #F969B9;
+    color: #FFFFFF;
 }
 
 .navbar {
