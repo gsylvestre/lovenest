@@ -4,7 +4,7 @@
     <div class="columns">
         <div class="column is-one-third">
             {% for pic in foundUser.profilePicture %}
-                <img src="{{ asset('img/profile/small/' ~ pic.filename) }}" alt="Photo de {{ foundUser.username }}">
+                <img src="{{ asset('img/profile/big/' ~ pic.filename) }}" alt="Photo de {{ foundUser.username }}">
             {% endfor %}
         </div>
         <div class="column">

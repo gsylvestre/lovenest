@@ -186,7 +186,7 @@ class AppFixtures extends Fixture
             $user->setDateCreated($faker->dateTimeBetween("- 5 months"));
             $user->setRoles(["ROLE_USER"]);
             $user->setEmail($faker->unique()->email);
-            $user->setUsername($faker->unique()->userName);
+            $user->setUsername(str_replace(".", "_", $faker->unique()->userName));
             $hash = $this->passwordEncoder->encodePassword($user, $user->getUsername());
             $user->setPassword($hash);
             $user->setProfile($profile);

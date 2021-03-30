@@ -5,8 +5,15 @@
 {% endblock %}
 
 {% block body %}
+    <div class="is-flex is-flex-wrap-wrap">
     {% for user in users %}
-        <div>{{ user.username }}</div>
+        <a href="{{ path('profile_view', {'username': user.username}) }}" class="box ml-1 mr-1">
+            <figure class="image is-128x128">
+                <img src="{{ asset('img/profile/small/'~user.profilePicture[0].filename) }}" alt="{{ user.username }}">
+            </figure>
+            <p class="has-text-centered">{{ user.username }}</p>
+        </a>
     {% endfor %}
+    </div>
 {% endblock %}
 
