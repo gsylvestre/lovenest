@@ -38,5 +38,6 @@ security:
         - { path: ^/connexion$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/inscription$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/cgu$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }
 

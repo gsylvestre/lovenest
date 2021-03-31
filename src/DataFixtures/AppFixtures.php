@@ -165,6 +165,8 @@ class AppFixtures extends Fixture
             $picFilenames[] = $pf->getRealPath();
         }
 
+        $this->createStaticUser($manager, $faker->randomElement($picFilenames));
+
         for($i = 0; $i < 100; $i++){
             $profile = new Profile();
             $profile->setDescription($faker->paragraphs($faker->numberBetween(0,4), true));
@@ -214,6 +216,54 @@ class AppFixtures extends Fixture
         }
 
 
+
+        $manager->flush();
+    }
+
+    private function createStaticUser($manager, $picture)
+    {
+        $profile = new Profile();
+        $profile->setDescription("bla bla bla");
+        $profile->setCity("Nantes");
+        $profile->setPostalCode("44000");
+        $profile->setDateCreated(new \DateTime("- 5 months"));
+        $profile->setBirthday(new \DateTime("-35 years"));
+        $profile->setGender("o");
+
+        $criterias = new SearchCriterias();
+        $criterias->setMinAge(25);
+        $criterias->setMaxAge(40);
+        $criterias->setGenders(["m", "f", "o"]);
+        $criterias->addDepartment($manager->getRepository(Department::class)->findOneBy(['code' => '44']));
+
+        $user = new User();
+        $user->setDateCreated(new \DateTime("- 5 months"));
+        $user->setRoles(["ROLE_USER"]);
+        $user->setEmail('yo@yo.com');
+        $user->setUsername('yo');
+        $hash = $this->passwordEncoder->encodePassword($user, 'yoyoyo');
+        $user->setPassword($hash);
+        $user->setProfile($profile);
+        $user->setSearchCriterias($criterias);
+
+        $manager->persist($profile);
+        $manager->persist($criterias);
+        $manager->persist($user);
+
+        $newFilename = ByteString::fromRandom(30) . ".jpg";
+
+        //redimensionne l'image avec SimpleImage
+        $simpleImage = new SimpleImage();
+        $simpleImage->fromFile($picture)
+            ->toFile($this->parameterBag->get('upload_dir') . "/big/$newFilename")
+            ->thumbnail(140, 140)
+            ->toFile($this->parameterBag->get('upload_dir') . "/small/$newFilename");
+
+        $profilePicture = new ProfilePicture();
+        $profilePicture->setFilename($newFilename);
+        $profilePicture->setUser($user);
+        $profilePicture->setDateCreated($user->getDateCreated());
+        $manager->persist($profilePicture);
 
         $manager->flush();
     }

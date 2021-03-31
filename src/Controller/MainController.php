@@ -17,4 +17,14 @@ class MainController extends AbstractController
 
         ]);
     }
+
+    /**
+     * @Route("/cgu", name="main_cgu")
+     */
+    public function cgu(): Response
+    {
+        return $this->render('main/cgu.html.twig', [
+
+        ]);
+    }
 }
