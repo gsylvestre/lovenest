@@ -31,6 +31,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $qb->setMaxResults(50);
 
+        //on s'exclut soi-même de la recherche mdr
+        $qb->andWhere("u != :user")->setParameter(":user", $user);
+
+        //filtre sur le genre
+        if (!empty($user->getSearchCriterias()->getGenders())) {
+            $genders = $user->getSearchCriterias()->getGenders();
+            $qb->andWhere('profile.gender IN (:genders)')->setParameter(':genders', $genders);
+        }
+
+        //filtre sur l'âge minimal
+        if (!empty($minAge = $user->getSearchCriterias()->getMinAge())) {
+            $minBirthDate = new \DateTime("- $minAge years");
+            $qb->andWhere('profile.birthday <= :minBirthDate')->setParameter(':minBirthDate', $minBirthDate);
+        }
+
+        //filtre sur l'âge maximal
+        if (!empty($maxAge = $user->getSearchCriterias()->getMaxAge())) {
+            $maxBirthDate = new \DateTime("- $maxAge years");
+            $qb->andWhere('profile.birthday >= :maxBirthDate')->setParameter(':maxBirthDate', $maxBirthDate);
+        }
+
+        //filtre sur le département
+        if (!empty($depts = $user->getSearchCriterias()->getDepartments())){
+
+        }
+
         $query = $qb->getQuery();
         $results = $query->getResult();
         return $results;

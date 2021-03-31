@@ -40,3 +40,15 @@ footer {
     padding: 30px 0;
     margin-bottom: 0;
 }
+
+a.gender-f {
+    background-color: rgba(249, 105, 185, 0.2);
+}
+
+a.gender-m {
+    background-color: rgba(50, 115, 220, 0.2);
+}
+
+a.gender-o {
+    background-color: rgba(220, 197, 50, 0.2);
+}

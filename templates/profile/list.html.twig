@@ -5,13 +5,19 @@
 {% endblock %}
 
 {% block body %}
+    <div>Vous recherchez des {{ app.user.searchCriterias.genders|join(',') }}
+        de {{ app.user.searchCriterias.minAge }} à {{ app.user.searchCriterias.maxAge }} ans habitant dans les départements :
+        {% for dept in app.user.searchCriterias.departments %}
+            {{ dept.name }}
+        {% endfor %}</div>
+
     <div class="is-flex is-flex-wrap-wrap">
     {% for user in users %}
-        <a href="{{ path('profile_view', {'username': user.username}) }}" class="box ml-1 mr-1">
+        <a href="{{ path('profile_view', {'username': user.username}) }}" class="box ml-1 mr-1 gender-{{ user.profile.gender }}">
             <figure class="image is-128x128">
                 <img src="{{ asset('img/profile/small/'~user.profilePicture[0].filename) }}" alt="{{ user.username }}">
             </figure>
-            <p class="has-text-centered">{{ user.username }}</p>
+            <p class="has-text-centered">{{ user.username }}<br>{{ user.profile.age }} ans / {{ user.profile.postalCode }}</p>
         </a>
     {% endfor %}
     </div>
