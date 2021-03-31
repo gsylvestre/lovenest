@@ -104,7 +104,7 @@
 
 {%- block date_widget -%}
     {%- if widget != 'single_text' -%}
-        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' control is-grouped date-widget')|trim}) -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' control is-flex date-widget')|trim}) -%}
     {%- endif -%}
     {{- parent() -}}
 {%- endblock date_widget -%}
