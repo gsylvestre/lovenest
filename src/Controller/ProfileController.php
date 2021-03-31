@@ -10,6 +10,7 @@ use App\Form\ProfilePictureType;
 use App\Form\ProfileType;
 use App\Form\SearchCriteriasType;
 use App\Repository\UserRepository;
+use App\Security\UserRoleUpdater;
 use claviska\SimpleImage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,9 +24,9 @@ class ProfileController extends AbstractController
 {
 
     /**
-     * @Route("/profil/modification", name="profile_edit")
+     * @Route("/profil/modification/infos", name="profile_edit")
      */
-    public function edit(Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, EntityManagerInterface $entityManager, UserRoleUpdater $roleUpdater): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -45,6 +46,8 @@ class ProfileController extends AbstractController
             $entityManager->persist($profile);
             $entityManager->flush();
 
+            $roleUpdater->update($user);
+
             $this->addFlash("success", "Votre profil a bien été enregistré !");
             return $this->redirectToRoute('profile_picture');
         }
@@ -55,9 +58,9 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/criteres-de-recherche/modification", name="profile_criterias_edit")
+     * @Route("/profil/modification/criteres-de-recherche", name="profile_criterias_edit")
      */
-    public function criteriasEdit(Request $request, EntityManagerInterface $entityManager): Response
+    public function criteriasEdit(Request $request, EntityManagerInterface $entityManager, UserRoleUpdater $roleUpdater): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -76,6 +79,8 @@ class ProfileController extends AbstractController
             $entityManager->persist($searchCriterias);
             $entityManager->flush();
 
+            $roleUpdater->update($user);
+
             $this->addFlash("success", "Vos critères ont bien été enregistrés !");
             return $this->redirectToRoute('profile_view', ['username' => $user->getUsername()]);
         }
@@ -87,9 +92,9 @@ class ProfileController extends AbstractController
 
 
     /**
-     * @Route("/profil/photo", name="profile_picture")
+     * @Route("/profil/modification/photo", name="profile_picture")
      */
-    public function profilePicture(Request $request, EntityManagerInterface $entityManager): Response
+    public function profilePicture(Request $request, EntityManagerInterface $entityManager, UserRoleUpdater $roleUpdater): Response
     {
         //todo: gérer l'image existante
 
@@ -134,6 +139,8 @@ class ProfileController extends AbstractController
 
             $entityManager->persist($profilePicture);
             $entityManager->flush();
+
+            $roleUpdater->update($user);
 
             $this->addFlash('success', 'Photo ajoutée !');
             return $this->redirectToRoute('profile_criterias_edit');

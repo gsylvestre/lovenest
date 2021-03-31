@@ -35,7 +35,7 @@ class SecurityController extends AbstractController
             );
 
             $user->setDateCreated(new \DateTime());
-            $user->setRoles(["ROLE_USER"]);
+            $user->setRoles(["ROLE_USER_INCOMPLETE"]);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);

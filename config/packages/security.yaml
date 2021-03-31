@@ -25,12 +25,16 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
+            access_denied_handler: App\Security\AccessDeniedHandler
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
+
+    role_hierarchy:
+        ROLE_USER: ROLE_USER_INCOMPLETE
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
@@ -39,5 +43,6 @@ security:
         - { path: ^/inscription$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/cgu$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/profil/modification, roles: ROLE_USER_INCOMPLETE }
         - { path: ^/, roles: ROLE_USER }
 
