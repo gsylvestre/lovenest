@@ -66,10 +66,22 @@ class User implements UserInterface
      */
     private $searchCriterias;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Heart::class, mappedBy="initiatedBy")
+     */
+    private $sentHearts;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Heart::class, mappedBy="sentTo")
+     */
+    private $receivedHearts;
+
 
     public function __construct()
     {
         $this->profilePicture = new ArrayCollection();
+        $this->sentHearts = new ArrayCollection();
+        $this->receivedHearts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +240,66 @@ class User implements UserInterface
         }
 
         $this->searchCriterias = $searchCriterias;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Heart[]
+     */
+    public function getSentHearts(): Collection
+    {
+        return $this->sentHearts;
+    }
+
+    public function addSentHeart(Heart $sentHeart): self
+    {
+        if (!$this->sentHearts->contains($sentHeart)) {
+            $this->sentHearts[] = $sentHeart;
+            $sentHeart->setInitiatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSentHeart(Heart $sentHeart): self
+    {
+        if ($this->sentHearts->removeElement($sentHeart)) {
+            // set the owning side to null (unless already changed)
+            if ($sentHeart->getInitiatedBy() === $this) {
+                $sentHeart->setInitiatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Heart[]
+     */
+    public function getReceivedHearts(): Collection
+    {
+        return $this->receivedHearts;
+    }
+
+    public function addReceivedHeart(Heart $receivedHeart): self
+    {
+        if (!$this->receivedHearts->contains($receivedHeart)) {
+            $this->receivedHearts[] = $receivedHeart;
+            $receivedHeart->setSentTo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedHeart(Heart $receivedHeart): self
+    {
+        if ($this->receivedHearts->removeElement($receivedHeart)) {
+            // set the owning side to null (unless already changed)
+            if ($receivedHeart->getSentTo() === $this) {
+                $receivedHeart->setSentTo(null);
+            }
+        }
 
         return $this;
     }

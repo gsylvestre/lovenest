@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Department;
+use App\Entity\Heart;
 use App\Entity\Profile;
 use App\Entity\ProfilePicture;
 use App\Entity\SearchCriterias;
@@ -165,7 +166,6 @@ class AppFixtures extends Fixture
             $picFilenames[] = $pf->getRealPath();
         }
 
-        $this->createStaticUser($manager, $faker->randomElement($picFilenames));
 
         for($i = 0; $i < 100; $i++){
             $profile = new Profile();
@@ -215,13 +215,16 @@ class AppFixtures extends Fixture
             $manager->persist($profilePicture);
         }
 
-
-
         $manager->flush();
+
+        $this->createStaticUser($manager, $faker->randomElement($picFilenames));
+
     }
 
     private function createStaticUser($manager, $picture)
     {
+        $faker = \Faker\Factory::create("fr_FR");
+
         $profile = new Profile();
         $profile->setDescription("bla bla bla");
         $profile->setCity("Nantes");
@@ -264,6 +267,27 @@ class AppFixtures extends Fixture
         $profilePicture->setUser($user);
         $profilePicture->setDateCreated($user->getDateCreated());
         $manager->persist($profilePicture);
+
+
+        $manager->flush();
+
+        //hearts
+        $allUsers = $manager->getRepository(User::class)->findAll();
+
+        for($i=0; $i<25; $i++) {
+            $heart = new Heart();
+            $heart->setInitiatedBy($user);
+            $heart->setSentTo($faker->randomElement($allUsers));
+            if ($heart->getSentTo() === $user) {
+                continue;
+            }
+            $heart->setIsReciprocal($faker->optional(0.8)->boolean);
+            $heart->setSentDate($faker->dateTimeBetween($user->getDateCreated()));
+            if ($heart->getIsReciprocal()) {
+                $heart->setReactionDate($faker->dateTimeBetween($heart->getSentDate()));
+            }
+            $manager->persist($heart);
+        }
 
         $manager->flush();
     }
