@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\HeartRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=HeartRepository::class)
@@ -14,6 +15,7 @@ class Heart
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"heart_read"})
      */
     private $id;
 
@@ -35,6 +37,7 @@ class Heart
     private $isReciprocal;
 
     /**
+     * @Groups({"heart_read"})
      * @ORM\Column(type="datetime")
      */
     private $sentDate;

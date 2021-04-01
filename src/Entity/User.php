@@ -67,12 +67,12 @@ class User implements UserInterface
     private $searchCriterias;
 
     /**
-     * @ORM\OneToMany(targetEntity=Heart::class, mappedBy="initiatedBy")
+     * @ORM\OneToMany(targetEntity=Heart::class, mappedBy="initiatedBy", cascade={"persist", "remove"})
      */
     private $sentHearts;
 
     /**
-     * @ORM\OneToMany(targetEntity=Heart::class, mappedBy="sentTo")
+     * @ORM\OneToMany(targetEntity=Heart::class, mappedBy="sentTo", cascade={"persist", "remove"})
      */
     private $receivedHearts;
 

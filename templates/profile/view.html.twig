@@ -9,6 +9,8 @@
         </div>
         <div class="column">
             <h2>Profil de {{ foundUser.username }}</h2>
+            <button class="like-button" data-user-id="{{ foundUser.id }}">LIKE</button>
+
             <div>{{ foundUser.profile.age }} ans</div>
             <div>{{ foundUser.profile.description|nl2br }}</div>
 

@@ -31,12 +31,20 @@ class ProfileType extends AbstractType
             ->add('description', null, ['label' => 'Décrivez-vous !', 'required' => false])
             ->add('submit', SubmitType::class, ['label' => 'Enregistrer !'])
         ;
+
+
+        $builder
+            ->add('champ1')
+            ->add('champ2');
+
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Profile::class,
+            'show_all_fields' => true
         ]);
     }
 }

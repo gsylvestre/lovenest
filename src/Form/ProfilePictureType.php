@@ -37,6 +37,7 @@ class ProfilePictureType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ProfilePicture::class,
+            'nouvelle_option' => []
         ]);
     }
 }
