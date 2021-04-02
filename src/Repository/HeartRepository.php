@@ -19,6 +19,15 @@ class HeartRepository extends ServiceEntityRepository
         parent::__construct($registry, Heart::class);
     }
 
+    public function findExistingHeartBetweenTwoUser(\App\Entity\User $user1, \App\Entity\User $user2)
+    {
+        $qb = $this->createQueryBuilder('h');
+        $qb->andWhere('h.sentTo = :user1 OR h.initiatedBy = :user1')->setParameter(':user1', $user1);
+        $qb->andWhere('h.sentTo = :user2 OR h.initiatedBy = :user2')->setParameter(':user2', $user2);
+        $query = $qb->getQuery();
+        return $query->getOneOrNullResult();
+    }
+
     // /**
     //  * @return Heart[] Returns an array of Heart objects
     //  */
@@ -47,4 +56,5 @@ class HeartRepository extends ServiceEntityRepository
         ;
     }
     */
+
 }

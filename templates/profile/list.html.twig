@@ -13,12 +13,25 @@
 
     <div class="is-flex is-flex-wrap-wrap">
     {% for user in users %}
-        <a href="{{ path('profile_view', {'username': user.username}) }}" class="box ml-1 mr-1 gender-{{ user.profile.gender }}">
-            <figure class="image is-128x128">
-                <img src="{{ asset('img/profile/small/'~user.profilePicture[0].filename) }}" alt="{{ user.username }}">
-            </figure>
-            <p class="has-text-centered">{{ user.username }}<br>{{ user.profile.age }} ans / {{ user.profile.postalCode }}</p>
-        </a>
+        <div class="box ml-1 mr-1 gender-{{ user.profile.gender }}">
+            <a href="{{ path('profile_view', {'username': user.username}) }}" >
+                <figure class="image is-128x128">
+                    <img src="{{ asset('img/profile/small/'~user.profilePicture[0].filename) }}" alt="{{ user.username }}">
+                </figure>
+                <p class="has-text-centered">{{ user.username }}<br>{{ user.profile.age }} ans / {{ user.profile.postalCode }}</p>
+            </a>
+
+            {% set heart = app.user.getSentHeartToUser(user) %}
+            {% if heart %}
+                <span class="icon-text like-button" data-action="unlike" data-heart-id="{{ heart.id }}" data-user-id="{{ user.id }}" title="Coeur sur toi !">
+                    <span class="icon"><i class="fas fa-heart"></i></span>
+                </span>
+            {% else %}
+                <span class="icon-text like-button" data-action="like" data-user-id="{{ user.id }}" title="Coeur sur toi !">
+                    <span class="icon"><i class="fas fa-heart"></i></span>
+                </span>
+            {% endif %}
+        </div>
     {% endfor %}
     </div>
 {% endblock %}

@@ -9,7 +9,17 @@
         </div>
         <div class="column">
             <h2>Profil de {{ foundUser.username }}</h2>
-            <button class="like-button" data-user-id="{{ foundUser.id }}">LIKE</button>
+
+            {% set heart = app.user.getSentHeartToUser(foundUser) %}
+            {% if heart %}
+                <span class="icon-text like-button" data-action="unlike" data-heart-id="{{ heart.id }}" data-user-id="{{ foundUser.id }}" title="Coeur sur toi !">
+                    <span class="icon"><i class="fas fa-heart"></i></span>
+                </span>
+            {% else %}
+                <span class="icon-text like-button" data-action="like" data-user-id="{{ foundUser.id }}" title="Coeur sur toi !">
+                    <span class="icon"><i class="fas fa-heart"></i></span>
+                </span>
+            {% endif %}
 
             <div>{{ foundUser.profile.age }} ans</div>
             <div>{{ foundUser.profile.description|nl2br }}</div>

@@ -41,14 +41,25 @@ footer {
     margin-bottom: 0;
 }
 
-a.gender-f {
+.gender-f {
     background-color: rgba(249, 105, 185, 0.2);
 }
 
-a.gender-m {
+.gender-m {
     background-color: rgba(50, 115, 220, 0.2);
 }
 
-a.gender-o {
+.gender-o {
     background-color: rgba(220, 197, 50, 0.2);
+}
+
+.like-button,
+.unlike-button {
+    cursor: pointer;
+    color: red;
+    font-size: 1.5rem;
+}
+
+.like-button[data-action="unlike"] {
+    color: black;
 }

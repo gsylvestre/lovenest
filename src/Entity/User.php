@@ -77,6 +77,18 @@ class User implements UserInterface
     private $receivedHearts;
 
 
+    public function getSentHeartToUser(User $user): ?Heart
+    {
+        /** @var Heart $heart */
+        foreach($this->sentHearts as $heart){
+            if ($heart->getSentTo() === $user){
+                return $heart;
+            }
+        }
+        return null;
+    }
+
+
     public function __construct()
     {
         $this->profilePicture = new ArrayCollection();

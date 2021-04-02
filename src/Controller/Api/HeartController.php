@@ -37,7 +37,11 @@ class HeartController extends AbstractController
     /**
      * @Route("/api/heart/", name="api_heart_create", methods={"POST"})
      */
-    public function create(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function create(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+        HeartRepository $heartRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -46,7 +50,7 @@ class HeartController extends AbstractController
         $receivedJson = $request->getContent();
         $receivedDatas = json_decode($receivedJson);
 
-        //retrouve l'utilisateur qui se font liké (on a reçu son id)
+        //retrouve l'utilisateur qui se fait liké (on a reçu son id)
         $sentTo = $userRepository->find($receivedDatas->sentToId);
 
         if (!$sentTo){
@@ -56,7 +60,17 @@ class HeartController extends AbstractController
             ], 400);
         }
 
+        //tente de retrouver ce heart s'il existe
+        $heart = $heartRepository->findExistingHeartBetweenTwoUser($user, $sentTo);
+        if ($heart){
+            return $this->json([
+                "status" => "error",
+                "message" => "Un coeur existe déjà entre ces 2 utilisateurs !"
+            ], 400);
+        }
+
         $heart = new Heart();
+
         $heart->setSentTo($sentTo);
         $heart->setSentDate(new \DateTime());
         $heart->setInitiatedBy($user);
@@ -75,9 +89,23 @@ class HeartController extends AbstractController
     /**
      * @Route("/api/heart/{id}", name="api_heart_delete", methods={"DELETE"})
      */
-    public function delete(int $id): Response
+    public function delete(int $id, HeartRepository $heartRepository, EntityManagerInterface $entityManager): Response
     {
+        $heart = $heartRepository->find($id);
+        if ($heart){
+            $entityManager->remove($heart);
+            $entityManager->flush();
 
+            return $this->json([
+                'status' => 'ok',
+                'message' => 'Coeur supprimé !'
+            ], 200);
+        }
+
+        return $this->json([
+            'status' => 'error',
+            'message' => "Ce coeur n'existe pas !"
+        ], 400);
     }
 
 
